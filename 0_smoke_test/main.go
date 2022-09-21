@@ -2,17 +2,19 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"log"
 	"net"
 )
 
 const (
-	HOST = "localhost"
-	PORT = "1025"
+	host = "localhost"
+	port = "1025"
 )
 
 func main() {
 	var err error
-	addr, err := net.ResolveTCPAddr("tcp", HOST+":"+PORT)
+	addr, err := net.ResolveTCPAddr("tcp", host+":"+port)
 	if err != nil {
 		panic(err)
 	}
@@ -28,10 +30,14 @@ func main() {
 			panic(err)
 		}
 		go func(c *net.TCPConn) {
-			buffer := make([]byte, 512)
-			c.Read(buffer)
-			fmt.Println(buffer)
-			c.Write(buffer)
+			defer c.Close()
+			bytes, err := io.ReadAll(c)
+			fmt.Println(bytes)
+			if err != nil {
+				log.Println(err.Error())
+				return
+			}
+			c.Write(bytes)
 		}(conn)
 	}
 }
