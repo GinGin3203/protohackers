@@ -2,14 +2,11 @@
 
 version: '3'
 
-vars:
-  SSH_HOST_REMOTE: sandbox
-  BINARY_NAME: '{{.CLI_ARGS}}_exe'
-  DIR_NAME: '{{.CLI_ARGS}}'
 
 tasks:
   default:
     vars:
+        BINARY_NAME: '{{.CLI_ARGS}}_exe'
     cmds:
       - task: build
       - task: push
@@ -17,10 +14,17 @@ tasks:
 
   build:
     internal: true
+    vars:
+      BINARY_NAME: '{{.CLI_ARGS}}_exe'
+      DIR_NAME: '{{.CLI_ARGS}}'
     cmds:
     - GOOS=linux GOARCH=amd64 go build -o {{.BINARY_NAME}} {{.DIR_NAME}}/main.go
 
   push:
+    vars:
+      SSH_HOST_REMOTE: sandbox
+      BINARY_NAME: '{{.CLI_ARGS}}_exe'
+      DIR_NAME: '{{.CLI_ARGS}}'
     internal: true
     cmds:
-    - rsync {{.BINARY_NAME}} sandbox:~/{{.BINARY_NAME}}
+    - rsync {{.BINARY_NAME}} {{.SSH_HOST_REMOTE}}:~/{{.BINARY_NAME}}
