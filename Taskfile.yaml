@@ -1,0 +1,26 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  SSH_HOST_REMOTE: sandbox
+  BINARY_NAME: '{{.CLI_ARGS}}_exe'
+  DIR_NAME: '{{.CLI_ARGS}}'
+
+tasks:
+  default:
+    vars:
+    cmds:
+      - task: build
+      - task: push
+      - defer: rm {{.BINARY_NAME}}
+
+  build:
+    internal: true
+    cmds:
+    - GOOS=linux GOARCH=amd64 go build -o {{.BINARY_NAME}} {{.DIR_NAME}}/main.go
+
+  push:
+    internal: true
+    cmds:
+    - rsync {{.BINARY_NAME}} sandbox:~/{{.BINARY_NAME}}
