@@ -31,13 +31,22 @@ func main() {
 		}
 		go func(c *net.TCPConn) {
 			defer c.Close()
+			for {
 			bytes, err := io.ReadAll(c)
+			if err != nil {
+				log.Println(err)		
+				return
+			}			
+			if len(bytes) == 0{
+				continue
+			}
 			fmt.Println(bytes)
 			if err != nil {
 				log.Println(err.Error())
 				return
 			}
 			c.Write(bytes)
+			}
 		}(conn)
 	}
 }
