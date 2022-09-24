@@ -18,8 +18,7 @@ tasks:
       BINARY_NAME: '{{.CLI_ARGS}}_exe'
       DIR_NAME: '{{.CLI_ARGS}}'
     cmds:
-    - GOOS=linux GOARCH=amd64 go build -o {{.BINARY_NAME}} {{.DIR_NAME}}/main.go
-
+    - GOOS=linux GOARCH=amd64 go build -o {{.BINARY_NAME}} ./{{.DIR_NAME}}/...
   push:
     vars:
       SSH_HOST_REMOTE: sandbox
