@@ -21,9 +21,10 @@ func processTCPConn(c net.Conn) {
 	s.Split(bufio.ScanLines)
 	for s.Scan() {
 		b := s.Bytes()
+		log.Printf("request: %s\n", string(b))
 		var req Request
 		if err := json.Unmarshal(b, &req); err != nil || !req.isWellFormed() {
-			log.Printf("malformed request or err: %s", err)
+			log.Printf("malformed request: %s\n", string(b))
 			if _, err := c.Write([]byte("invalid")); err != nil {
 				log.Println(err)
 				return

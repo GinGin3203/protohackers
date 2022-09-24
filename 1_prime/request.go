@@ -1,6 +1,10 @@
 package main
 
-import "encoding/json"
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+)
 
 type MyNumber struct {
 	json.Number
@@ -9,6 +13,9 @@ type MyNumber struct {
 
 func (m *MyNumber) UnmarshalJSON(data []byte) error {
 	m.Set = true
+	if bytes.ContainsAny(data, "\"") {
+		return errors.New("malformed number")
+	}
 	return json.Unmarshal(data, &m.Number)
 }
 
